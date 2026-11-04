@@ -36,11 +36,16 @@ cp .env.example .env   # fill in your own API keys, never commit .env
 pytest
 ```
 
+Without API keys the app still runs and is testable: it falls back to
+deterministic fake embeddings and an in-memory vector store. Live Google /
+Pinecone validation requires the free keys in `.env` (J2 was validated with
+the offline providers, since no keys are configured yet).
+
 ## Roadmap
 
 - [x] Project scaffold, configuration, logging
 - [x] PDF ingestion: per-page extraction + chunking with source/page metadata
-- [ ] Embeddings + Pinecone indexing (`POST /upload`)
+- [x] Embeddings + Pinecone indexing (`POST /upload`)
 - [ ] Retrieval + grounded generation (`POST /ask`)
 - [ ] Chat interface
 - [ ] Evaluation set with published metrics
