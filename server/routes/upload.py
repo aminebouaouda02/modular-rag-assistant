@@ -26,7 +26,7 @@ def make_upload_router(embedder: EmbeddingProvider, store: VectorStore) -> APIRo
             with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
                 tmp.write(data)
                 tmp_path = tmp.name
-            result = index_pdf(tmp_path, embedder, store)
+            result = index_pdf(tmp_path, embedder, store, source_name=file.filename)
             if result["chunks_indexed"] == 0:
                 raise HTTPException(
                     status_code=400, detail="No text could be extracted from this PDF"

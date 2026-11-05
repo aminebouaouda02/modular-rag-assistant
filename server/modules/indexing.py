@@ -39,12 +39,12 @@ def index_chunks(chunks: list[Chunk], embedder: EmbeddingProvider,
 
 
 def index_pdf(pdf_path: str | Path, embedder: EmbeddingProvider,
-              store: VectorStore) -> dict:
+              store: VectorStore, source_name: str | None = None) -> dict:
     """Full upload step for one PDF: ingest, chunk, embed, index."""
-    chunks = extract_and_chunk(pdf_path)
+    chunks = extract_and_chunk(pdf_path, source_name=source_name)
     indexed = index_chunks(chunks, embedder, store)
     return {
-        "filename": Path(pdf_path).name,
+        "filename": source_name or Path(pdf_path).name,
         "pages": len({c.page for c in chunks}),
         "chunks_indexed": indexed,
     }

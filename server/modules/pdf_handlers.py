@@ -29,16 +29,21 @@ class Chunk:
     text: str
 
 
-def load_pdf_pages(pdf_path: str | Path) -> list[PageText]:
-    """Extract the text of every page of a PDF."""
+def load_pdf_pages(pdf_path: str | Path, source_name: str | None = None) -> list[PageText]:
+    """Extract the text of every page of a PDF.
+
+    ``source_name`` overrides the recorded source (e.g. the uploaded
+    filename when the file on disk is a temp copy).
+    """
     path = Path(pdf_path)
+    source = source_name or path.name
     pages: list[PageText] = []
     with fitz.open(path) as doc:
         for i, page in enumerate(doc, start=1):
             text = page.get_text().strip()
             if text:
-                pages.append(PageText(source=path.name, page=i, text=text))
-    logger.info("Loaded %d non-empty pages from %s", len(pages), path.name)
+                pages.append(PageText(source=source, page=i, text=text))
+    logger.info("Loaded %d non-empty pages from %s", len(pages), source)
     return pages
 
 
@@ -86,6 +91,6 @@ def chunk_pages(
     return chunks
 
 
-def extract_and_chunk(pdf_path: str | Path) -> list[Chunk]:
+def extract_and_chunk(pdf_path: str | Path, source_name: str | None = None) -> list[Chunk]:
     """Full ingestion step for one PDF: load pages, then chunk them."""
-    return chunk_pages(load_pdf_pages(pdf_path))
+    return chunk_pages(load_pdf_pages(pdf_path, source_name=source_name))

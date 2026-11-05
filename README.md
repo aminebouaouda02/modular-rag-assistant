@@ -37,16 +37,36 @@ pytest
 ```
 
 Without API keys the app still runs and is testable: it falls back to
-deterministic fake embeddings and an in-memory vector store. Live Google /
-Pinecone validation requires the free keys in `.env` (J2 was validated with
-the offline providers, since no keys are configured yet).
+deterministic fake embeddings, an in-memory vector store and a fake LLM
+that answers strictly from the retrieved chunks. Live Google / Pinecone /
+Groq validation requires the free keys in `.env` (J2 and J3 were
+validated with the offline providers, since no keys are configured yet).
+
+## API
+
+```bash
+# Upload a PDF (extracts, chunks, embeds, indexes)
+curl -F "file=@cours.pdf" http://localhost:8000/upload
+# {"filename": "cours.pdf", "pages": 12, "chunks_indexed": 48}
+
+# Ask a question grounded in the uploaded documents
+curl -X POST http://localhost:8000/ask \
+  -H "Content-Type: application/json" \
+  -d '{"question": "What does Kafka do?", "top_k": 5}'
+# {"answer": "Based on the provided documents: ... [cours.pdf, p. 3]",
+#  "sources": [{"source": "cours.pdf", "page": 3, "score": 0.87,
+#               "excerpt": "..."}]}
+```
+
+With no documents indexed, `/ask` answers
+"I don't know based on the provided documents." instead of guessing.
 
 ## Roadmap
 
 - [x] Project scaffold, configuration, logging
 - [x] PDF ingestion: per-page extraction + chunking with source/page metadata
 - [x] Embeddings + Pinecone indexing (`POST /upload`)
-- [ ] Retrieval + grounded generation (`POST /ask`)
+- [x] Retrieval + grounded generation (`POST /ask`)
 - [ ] Chat interface
 - [ ] Evaluation set with published metrics
 - [ ] Tests, CI, Docker
