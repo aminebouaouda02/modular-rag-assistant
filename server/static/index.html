@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modular RAG Assistant</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+         background: #f6f7f9; color: #1c2333; }
+  header { background: #14213d; color: #fff; padding: 16px 20px; }
+  header h1 { margin: 0; font-size: 20px; }
+  header p { margin: 4px 0 0; font-size: 13px; opacity: .8; }
+  main { max-width: 760px; margin: 0 auto; padding: 20px 16px 32px; }
+  .card { background: #fff; border: 1px solid #e2e6ec; border-radius: 10px;
+          padding: 16px; margin-bottom: 16px; }
+  .card h2 { margin: 0 0 8px; font-size: 15px; }
+  .hint { font-size: 13px; color: #5b6472; margin: 0 0 10px; }
+  #upload-status { font-size: 13px; margin: 8px 0 0; }
+  #upload-status.ok { color: #177245; }
+  #upload-status.err { color: #b3261e; }
+  #messages { display: flex; flex-direction: column; gap: 12px; min-height: 120px; }
+  .msg { max-width: 85%; padding: 10px 14px; border-radius: 12px;
+         white-space: pre-wrap; line-height: 1.45; font-size: 14px; }
+  .msg.user { align-self: flex-end; background: #14213d; color: #fff;
+              border-bottom-right-radius: 4px; }
+  .msg.assistant { align-self: flex-start; background: #eef1f5;
+                   border-bottom-left-radius: 4px; }
+  .msg .sources { margin-top: 8px; font-size: 12px; color: #4a5468; }
+  .msg .sources span { display: inline-block; background: #fff; border: 1px solid #d5dae2;
+                       border-radius: 999px; padding: 2px 8px; margin: 2px 4px 0 0; }
+  .empty { color: #8a93a3; font-size: 14px; text-align: center; padding: 24px 0; }
+  #composer { display: flex; gap: 8px; }
+  #question { flex: 1; padding: 10px 12px; font-size: 14px;
+              border: 1px solid #c9cfd9; border-radius: 8px; }
+  button { padding: 10px 16px; font-size: 14px; border: none; border-radius: 8px;
+           background: #14213d; color: #fff; cursor: pointer; }
+  button:disabled { opacity: .5; cursor: default; }
+  #error { color: #b3261e; font-size: 13px; margin-top: 8px; min-height: 18px; }
+  .typing { color: #8a93a3; font-size: 13px; font-style: italic; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Modular RAG Assistant</h1>
+  <p>Upload PDFs, then ask questions — answers are grounded in your documents, with sources.</p>
+</header>
+<main>
+  <section class="card">
+    <h2>1. Upload a document</h2>
+    <p class="hint">PDF only. The file is chunked, embedded and indexed so you can ask about it.</p>
+    <input type="file" id="file" accept="application/pdf">
+    <button id="upload-btn" type="button">Upload</button>
+    <p id="upload-status" aria-live="polite"></p>
+  </section>
+
+  <section class="card">
+    <h2>2. Chat with your documents</h2>
+    <div id="messages"><p class="empty">No messages yet — upload a PDF, then ask your first question.</p></div>
+    <div id="composer">
+      <input type="text" id="question" placeholder="Ask a question about your documents…"
+             autocomplete="off" aria-label="Question">
+      <button id="send-btn" type="button">Send</button>
+    </div>
+    <p id="error" aria-live="polite"></p>
+  </section>
+</main>
+<script>
+  const messagesEl = document.getElementById("messages");
+  const questionEl = document.getElementById("question");
+  const sendBtn = document.getElementById("send-btn");
+  const errorEl = document.getElementById("error");
+  const uploadStatusEl = document.getElementById("upload-status");
+  const history = []; // [{role: "user"|"assistant", content: string}]
+
+  function clearEmptyState() {
+    const empty = messagesEl.querySelector(".empty");
+    if (empty) empty.remove();
+  }
+
+  function addMessage(role, text, sources) {
+    clearEmptyState();
+    const div = document.createElement("div");
+    div.className = "msg " + role;
+    div.textContent = text;
+    if (sources && sources.length) {
+      const src = document.createElement("div");
+      src.className = "sources";
+      src.textContent = "Sources: ";
+      sources.forEach((s) => {
+        const chip = document.createElement("span");
+        chip.textContent = `${s.source}, p. ${s.page}`;
+        chip.title = s.excerpt || "";
+        src.appendChild(chip);
+      });
+      div.appendChild(src);
+    }
+    messagesEl.appendChild(div);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+    return div;
+  }
+
+  async function ask() {
+    const question = questionEl.value.trim();
+    if (!question) return;
+    errorEl.textContent = "";
+    questionEl.value = "";
+    sendBtn.disabled = true;
+    addMessage("user", question);
+    history.push({ role: "user", content: question });
+    const typing = addMessage("assistant", "Thinking…");
+    typing.classList.add("typing");
+    try {
+      const response = await fetch("/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question, history: history.slice(0, -1) }),
+      });
+      const body = await response.json().catch(() => ({}));
+      typing.remove();
+      if (!response.ok) throw new Error(body.detail || `Request failed (${response.status})`);
+      addMessage("assistant", body.answer, body.sources || []);
+      history.push({ role: "assistant", content: body.answer });
+    } catch (err) {
+      typing.remove();
+      history.pop(); // drop the failed user turn so it is not sent again
+      errorEl.textContent = "Could not get an answer: " + err.message;
+    } finally {
+      sendBtn.disabled = false;
+      questionEl.focus();
+    }
+  }
+
+  sendBtn.addEventListener("click", ask);
+  questionEl.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") ask();
+  });
+
+  document.getElementById("upload-btn").addEventListener("click", async () => {
+    const fileInput = document.getElementById("file");
+    const file = fileInput.files[0];
+    uploadStatusEl.className = "";
+    if (!file) {
+      uploadStatusEl.textContent = "Choose a PDF file first.";
+      uploadStatusEl.classList.add("err");
+      return;
+    }
+    uploadStatusEl.textContent = `Uploading ${file.name}…`;
+    const form = new FormData();
+    form.append("file", file);
+    try {
+      const response = await fetch("/upload", { method: "POST", body: form });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(body.detail || `Upload failed (${response.status})`);
+      uploadStatusEl.textContent =
+        `Indexed ${body.filename}: ${body.pages} pages, ${body.chunks_indexed} chunks. You can ask about it now.`;
+      uploadStatusEl.classList.add("ok");
+      fileInput.value = "";
+    } catch (err) {
+      uploadStatusEl.textContent = "Upload failed: " + err.message;
+      uploadStatusEl.classList.add("err");
+    }
+  });
+
+  questionEl.focus();
+</script>
+</body>
+</html>
