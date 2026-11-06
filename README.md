@@ -39,8 +39,21 @@ pytest
 Without API keys the app still runs and is testable: it falls back to
 deterministic fake embeddings, an in-memory vector store and a fake LLM
 that answers strictly from the retrieved chunks. Live Google / Pinecone /
-Groq validation requires the free keys in `.env` (J2 and J3 were
+Groq validation requires the free keys in `.env` (J2, J3 and J4 were
 validated with the offline providers, since no keys are configured yet).
+
+## Chat interface
+
+```bash
+uvicorn server.app:app --reload
+# open http://localhost:8000
+```
+
+The page at `/` lets you upload a PDF and chat with your documents in the
+browser: each answer shows its sources as `[file, p. N]` chips, and the
+conversation history is sent with every question so follow-ups can refer
+back to earlier exchanges (`POST /ask` accepts an optional `history` list
+of `{"role": "user"|"assistant", "content": ...}` turns).
 
 ## API
 
@@ -67,7 +80,7 @@ With no documents indexed, `/ask` answers
 - [x] PDF ingestion: per-page extraction + chunking with source/page metadata
 - [x] Embeddings + Pinecone indexing (`POST /upload`)
 - [x] Retrieval + grounded generation (`POST /ask`)
-- [ ] Chat interface
+- [x] Chat interface (web page at `/`, multi-turn `history` on `/ask`)
 - [ ] Evaluation set with published metrics
 - [ ] Tests, CI, Docker
 
