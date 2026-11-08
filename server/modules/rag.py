@@ -30,13 +30,26 @@ class Source:
     excerpt: str
 
 
-def build_grounded_prompt(question: str, chunks: list[SearchResult]) -> str:
-    """Prompt the LLM with the retrieved chunks and nothing else."""
+def build_grounded_prompt(question: str, chunks: list[SearchResult],
+                          history: list[dict] | None = None) -> str:
+    """Prompt the LLM with the retrieved chunks and nothing else.
+
+    ``history`` is the conversation so far (``{"role": "user"|"assistant",
+    "content": ...}`` turns) so follow-up questions can refer back to
+    earlier exchanges; the grounding rule still applies: only the retrieved
+    context may be used for factual claims.
+    """
     lines = [SYSTEM_INSTRUCTION, "", "Context:"]
     for chunk in chunks:
         lines.append(f"[Source: {chunk.metadata.get('source', '?')}, "
                      f"p. {chunk.metadata.get('page', '?')}]")
         lines.append(chunk.text)
+        lines.append("")
+    if history:
+        lines.append("Conversation so far:")
+        for turn in history:
+            role = "User" if turn.get("role") == "user" else "Assistant"
+            lines.append(f"{role}: {turn.get('content', '')}")
         lines.append("")
     lines.append(f"Question: {question}")
     lines.append("Answer:")
@@ -45,13 +58,13 @@ def build_grounded_prompt(question: str, chunks: list[SearchResult]) -> str:
 
 def answer_question(question: str, embedder: EmbeddingProvider,
                     store: VectorStore, llm: LLMProvider,
-                    top_k: int = 5) -> dict:
+                    top_k: int = 5, history: list[dict] | None = None) -> dict:
     """Full ask step: retrieve, generate, return answer + sources."""
     results = retrieve(question, embedder, store, top_k=top_k)
     if not results:
         logger.info("No chunks retrieved for %.60r; answering without LLM", question)
         return {"answer": DONT_KNOW, "sources": []}
-    prompt = build_grounded_prompt(question, results)
+    prompt = build_grounded_prompt(question, results, history=history)
     answer = llm.generate(prompt)
     sources = [
         asdict(Source(
