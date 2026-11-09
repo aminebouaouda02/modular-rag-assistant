@@ -39,8 +39,8 @@ pytest
 Without API keys the app still runs and is testable: it falls back to
 deterministic fake embeddings, an in-memory vector store and a fake LLM
 that answers strictly from the retrieved chunks. Live Google / Pinecone /
-Groq validation requires the free keys in `.env` (J2, J3 and J4 were
-validated with the offline providers, since no keys are configured yet).
+Groq validation requires the free keys in `.env` (J2–J5 were validated
+with the offline providers, since no keys are configured yet).
 
 ## Chat interface
 
@@ -54,6 +54,44 @@ browser: each answer shows its sources as `[file, p. N]` chips, and the
 conversation history is sent with every question so follow-ups can refer
 back to earlier exchanges (`POST /ask` accepts an optional `history` list
 of `{"role": "user"|"assistant", "content": ...}` turns).
+
+## Evaluation
+
+`scripts/run_eval.py` scores the pipeline against a fixed set of 8 questions
+over a small known corpus (6 pages: Kafka, Spark, Docker, Pinecone, Groq,
+FastAPI — see `data/eval/corpus.json` and `data/eval/qa.json`):
+
+```bash
+python scripts/run_eval.py            # prints the report, writes data/eval/results.json
+python scripts/run_eval.py --top-k 5  # retrieve 5 chunks per question
+```
+
+Metrics: retrieval hit@k (the expected source page is among the returned
+sources), answer accuracy (the answer contains every expected keyword),
+citation rate (the answer cites a source as `[file, p. N]`), abstention
+rate (unanswerable questions answered "I don't know based on the provided
+documents.").
+
+Measured 2026-11-08 with the offline fake providers (no API keys configured
+— a deterministic baseline, not a quality claim):
+
+| Metric | Result |
+|--------|--------|
+| Retrieval hit@3 | 33% (2/6) |
+| Answer accuracy | 33% (2/6) |
+| Citation rate | 100% (6/6) |
+| Abstention rate (unanswerable) | 0% (0/2) |
+
+What the numbers say: the harness itself works — the test suite scores 100%
+on every metric with a deterministic keyword embedder — but the fake
+embeddings are hash-seeded random vectors, so retrieval is near chance (33%
+is the 3-of-6 chance level for top_k=3), and answers follow whatever was
+retrieved. The 0% abstention rate also exposes a real gap: `/ask` has no
+similarity threshold, so once any document is indexed it always answers
+from the top-k chunks, even for questions unrelated to the corpus. Re-run
+the eval after the free API keys are set in `.env` for live
+Google/Pinecone/Groq numbers; a similarity threshold is a candidate fix
+for a later slice.
 
 ## API
 
@@ -81,8 +119,8 @@ With no documents indexed, `/ask` answers
 - [x] Embeddings + Pinecone indexing (`POST /upload`)
 - [x] Retrieval + grounded generation (`POST /ask`)
 - [x] Chat interface (web page at `/`, multi-turn `history` on `/ask`)
-- [ ] Evaluation set with published metrics
-- [ ] Tests, CI, Docker
+- [x] Evaluation set with published metrics
+- [ ] GitHub Actions CI + Docker + final polish
 
 ## Design choices
 
