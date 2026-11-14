@@ -1,0 +1,267 @@
+{
+  "providers": "offline fakes (no API keys configured)",
+  "summary": {
+    "total": 8,
+    "answerable": 6,
+    "unanswerable": 2,
+    "top_k": 3,
+    "retrieval_hits": 2,
+    "retrieval_hit_rate_at_k": 0.333,
+    "answers_correct": 2,
+    "answer_accuracy": 0.333,
+    "citations": 6,
+    "citation_rate": 1.0,
+    "abstentions": 0,
+    "abstention_rate": 0.0
+  },
+  "questions": [
+    {
+      "question": "What is Apache Kafka?",
+      "answerable": true,
+      "expected_source": "eval-corpus.pdf",
+      "expected_page": 1,
+      "answer": "Based on the provided documents: Groq serves large language models with very low latency. [eval-corpus.pdf, p. 5] Apache Spark is a unified analytics engine for large-scale data processing. [eval-corpus.pdf, p. 2] Docker packages applications into containers. [eval-corpus.pdf, p. 3]",
+      "sources": [
+        {
+          "source": "eval-corpus.pdf",
+          "page": 5,
+          "score": 0.8262,
+          "excerpt": "Groq serves large language models with very low latency. Its language processing units run\ninference fast, so chat completions return in milliseconds. Groq offers a free tier for developers."
+        },
+        {
+          "source": "eval-corpus.pdf",
+          "page": 2,
+          "score": 0.7814,
+          "excerpt": "Apache Spark is a unified analytics engine for large-scale data processing. Spark processes\ndata in memory using resilient distributed datasets, which makes iterative jobs fast. Spark SQL\nlets you que"
+        },
+        {
+          "source": "eval-corpus.pdf",
+          "page": 3,
+          "score": 0.7677,
+          "excerpt": "Docker packages applications into containers. A Docker image is a read-only template that\nholds the code and dependencies. Containers share the host kernel and start in seconds.\nDocker Compose runs mu"
+        }
+      ],
+      "retrieval_hit": false,
+      "answer_match": false,
+      "cited": true,
+      "abstained": false
+    },
+    {
+      "question": "What is Apache Spark used for?",
+      "answerable": true,
+      "expected_source": "eval-corpus.pdf",
+      "expected_page": 2,
+      "answer": "Based on the provided documents: Groq serves large language models with very low latency. [eval-corpus.pdf, p. 5] Apache Kafka is a distributed event streaming platform. [eval-corpus.pdf, p. 1] Docker packages applications into containers. [eval-corpus.pdf, p. 3]",
+      "sources": [
+        {
+          "source": "eval-corpus.pdf",
+          "page": 5,
+          "score": 0.8295,
+          "excerpt": "Groq serves large language models with very low latency. Its language processing units run\ninference fast, so chat completions return in milliseconds. Groq offers a free tier for developers."
+        },
+        {
+          "source": "eval-corpus.pdf",
+          "page": 1,
+          "score": 0.7822,
+          "excerpt": "Apache Kafka is a distributed event streaming platform. Producers publish records to topics,\nand consumers subscribe to topics to read those records in order. Kafka stores records durably\non disk and "
+        },
+        {
+          "source": "eval-corpus.pdf",
+          "page": 3,
+          "score": 0.7537,
+          "excerpt": "Docker packages applications into containers. A Docker image is a read-only template that\nholds the code and dependencies. Containers share the host kernel and start in seconds.\nDocker Compose runs mu"
+        }
+      ],
+      "retrieval_hit": false,
+      "answer_match": false,
+      "cited": true,
+      "abstained": false
+    },
+    {
+      "question": "What does Docker do?",
+      "answerable": true,
+      "expected_source": "eval-corpus.pdf",
+      "expected_page": 3,
+      "answer": "Based on the provided documents: Apache Kafka is a distributed event streaming platform. [eval-corpus.pdf, p. 1] Docker packages applications into containers. [eval-corpus.pdf, p. 3] FastAPI is a modern Python web framework for building APIs. [eval-corpus.pdf, p. 6]",
+      "sources": [
+        {
+          "source": "eval-corpus.pdf",
+          "page": 1,
+          "score": 0.907,
+          "excerpt": "Apache Kafka is a distributed event streaming platform. Producers publish records to topics,\nand consumers subscribe to topics to read those records in order. Kafka stores records durably\non disk and "
+        },
+        {
+          "source": "eval-corpus.pdf",
+          "page": 3,
+          "score": 0.8816,
+          "excerpt": "Docker packages applications into containers. A Docker image is a read-only template that\nholds the code and dependencies. Containers share the host kernel and start in seconds.\nDocker Compose runs mu"
+        },
+        {
+          "source": "eval-corpus.pdf",
+          "page": 6,
+          "score": 0.8607,
+          "excerpt": "FastAPI is a modern Python web framework for building APIs. It validates requests\nautomatically from type hints and generates OpenAPI documentation. FastAPI runs on top of\nStarlette and Uvicorn."
+        }
+      ],
+      "retrieval_hit": true,
+      "answer_match": true,
+      "cited": true,
+      "abstained": false
+    },
+    {
+      "question": "What is Pinecone?",
+      "answerable": true,
+      "expected_source": "eval-corpus.pdf",
+      "expected_page": 4,
+      "answer": "Based on the provided documents: Groq serves large language models with very low latency. [eval-corpus.pdf, p. 5] FastAPI is a modern Python web framework for building APIs. [eval-corpus.pdf, p. 6] Apache Spark is a unified analytics engine for large-scale data processing. [eval-corpus.pdf, p. 2]",
+      "sources": [
+        {
+          "source": "eval-corpus.pdf",
+          "page": 5,
+          "score": 0.8865,
+          "excerpt": "Groq serves large language models with very low latency. Its language processing units run\ninference fast, so chat completions return in milliseconds. Groq offers a free tier for developers."
+        },
+        {
+          "source": "eval-corpus.pdf",
+          "page": 6,
+          "score": 0.845,
+          "excerpt": "FastAPI is a modern Python web framework for building APIs. It validates requests\nautomatically from type hints and generates OpenAPI documentation. FastAPI runs on top of\nStarlette and Uvicorn."
+        },
+        {
+          "source": "eval-corpus.pdf",
+          "page": 2,
+          "score": 0.8393,
+          "excerpt": "Apache Spark is a unified analytics engine for large-scale data processing. Spark processes\ndata in memory using resilient distributed datasets, which makes iterative jobs fast. Spark SQL\nlets you que"
+        }
+      ],
+      "retrieval_hit": false,
+      "answer_match": false,
+      "cited": true,
+      "abstained": false
+    },
+    {
+      "question": "Why use Groq for language models?",
+      "answerable": true,
+      "expected_source": "eval-corpus.pdf",
+      "expected_page": 5,
+      "answer": "Based on the provided documents: FastAPI is a modern Python web framework for building APIs. [eval-corpus.pdf, p. 6] Pinecone is a managed vector database for similarity search. [eval-corpus.pdf, p. 4] Groq serves large language models with very low latency. [eval-corpus.pdf, p. 5]",
+      "sources": [
+        {
+          "source": "eval-corpus.pdf",
+          "page": 6,
+          "score": 0.8933,
+          "excerpt": "FastAPI is a modern Python web framework for building APIs. It validates requests\nautomatically from type hints and generates OpenAPI documentation. FastAPI runs on top of\nStarlette and Uvicorn."
+        },
+        {
+          "source": "eval-corpus.pdf",
+          "page": 4,
+          "score": 0.8816,
+          "excerpt": "Pinecone is a managed vector database for similarity search. Vectors are stored with metadata,\nand a query returns the nearest neighbours by cosine similarity. Pinecone creates serverless\nindexes that"
+        },
+        {
+          "source": "eval-corpus.pdf",
+          "page": 5,
+          "score": 0.8453,
+          "excerpt": "Groq serves large language models with very low latency. Its language processing units run\ninference fast, so chat completions return in milliseconds. Groq offers a free tier for developers."
+        }
+      ],
+      "retrieval_hit": true,
+      "answer_match": true,
+      "cited": true,
+      "abstained": false
+    },
+    {
+      "question": "What is FastAPI?",
+      "answerable": true,
+      "expected_source": "eval-corpus.pdf",
+      "expected_page": 6,
+      "answer": "Based on the provided documents: Groq serves large language models with very low latency. [eval-corpus.pdf, p. 5] Apache Spark is a unified analytics engine for large-scale data processing. [eval-corpus.pdf, p. 2] Docker packages applications into containers. [eval-corpus.pdf, p. 3]",
+      "sources": [
+        {
+          "source": "eval-corpus.pdf",
+          "page": 5,
+          "score": 0.8663,
+          "excerpt": "Groq serves large language models with very low latency. Its language processing units run\ninference fast, so chat completions return in milliseconds. Groq offers a free tier for developers."
+        },
+        {
+          "source": "eval-corpus.pdf",
+          "page": 2,
+          "score": 0.8221,
+          "excerpt": "Apache Spark is a unified analytics engine for large-scale data processing. Spark processes\ndata in memory using resilient distributed datasets, which makes iterative jobs fast. Spark SQL\nlets you que"
+        },
+        {
+          "source": "eval-corpus.pdf",
+          "page": 3,
+          "score": 0.8156,
+          "excerpt": "Docker packages applications into containers. A Docker image is a read-only template that\nholds the code and dependencies. Containers share the host kernel and start in seconds.\nDocker Compose runs mu"
+        }
+      ],
+      "retrieval_hit": false,
+      "answer_match": false,
+      "cited": true,
+      "abstained": false
+    },
+    {
+      "question": "What is the capital of France?",
+      "answerable": false,
+      "expected_source": null,
+      "expected_page": null,
+      "answer": "Based on the provided documents: FastAPI is a modern Python web framework for building APIs. [eval-corpus.pdf, p. 6] Apache Kafka is a distributed event streaming platform. [eval-corpus.pdf, p. 1] Docker packages applications into containers. [eval-corpus.pdf, p. 3]",
+      "sources": [
+        {
+          "source": "eval-corpus.pdf",
+          "page": 6,
+          "score": 0.8114,
+          "excerpt": "FastAPI is a modern Python web framework for building APIs. It validates requests\nautomatically from type hints and generates OpenAPI documentation. FastAPI runs on top of\nStarlette and Uvicorn."
+        },
+        {
+          "source": "eval-corpus.pdf",
+          "page": 1,
+          "score": 0.7766,
+          "excerpt": "Apache Kafka is a distributed event streaming platform. Producers publish records to topics,\nand consumers subscribe to topics to read those records in order. Kafka stores records durably\non disk and "
+        },
+        {
+          "source": "eval-corpus.pdf",
+          "page": 3,
+          "score": 0.7247,
+          "excerpt": "Docker packages applications into containers. A Docker image is a read-only template that\nholds the code and dependencies. Containers share the host kernel and start in seconds.\nDocker Compose runs mu"
+        }
+      ],
+      "retrieval_hit": null,
+      "answer_match": null,
+      "cited": true,
+      "abstained": false
+    },
+    {
+      "question": "How do I bake sourdough bread at home?",
+      "answerable": false,
+      "expected_source": null,
+      "expected_page": null,
+      "answer": "Based on the provided documents: Docker packages applications into containers. [eval-corpus.pdf, p. 3] Apache Spark is a unified analytics engine for large-scale data processing. [eval-corpus.pdf, p. 2] Pinecone is a managed vector database for similarity search. [eval-corpus.pdf, p. 4]",
+      "sources": [
+        {
+          "source": "eval-corpus.pdf",
+          "page": 3,
+          "score": 0.8695,
+          "excerpt": "Docker packages applications into containers. A Docker image is a read-only template that\nholds the code and dependencies. Containers share the host kernel and start in seconds.\nDocker Compose runs mu"
+        },
+        {
+          "source": "eval-corpus.pdf",
+          "page": 2,
+          "score": 0.8048,
+          "excerpt": "Apache Spark is a unified analytics engine for large-scale data processing. Spark processes\ndata in memory using resilient distributed datasets, which makes iterative jobs fast. Spark SQL\nlets you que"
+        },
+        {
+          "source": "eval-corpus.pdf",
+          "page": 4,
+          "score": 0.8004,
+          "excerpt": "Pinecone is a managed vector database for similarity search. Vectors are stored with metadata,\nand a query returns the nearest neighbours by cosine similarity. Pinecone creates serverless\nindexes that"
+        }
+      ],
+      "retrieval_hit": null,
+      "answer_match": null,
+      "cited": true,
+      "abstained": false
+    }
+  ]
+}
